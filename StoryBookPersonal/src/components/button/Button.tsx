@@ -1,26 +1,37 @@
-
-import './button.css';
-
+import "./button.css";
 
 /**
  * Primary UI component for user interaction
  */
+
+export interface ButtonProps {
+  primary?: boolean;
+  size?: "small" | "medium" | "large";
+  backgroundColor?: string;
+  label: string;
+  onClick?: () => void;
+}
+
 export const Button = ({
   primary = false,
-  size = 'medium',
+  size = "medium",
   backgroundColor,
   label,
   ...props
 }: ButtonProps) => {
-  const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
+
+  const mode = primary ? "storybook-button--primary" : "storybook-button--secondary";
+
   return (
     <button
       type="button"
-      className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
+      className={["storybook-button", `storybook-button--${size}`, mode].join(" ")}
       style={{ backgroundColor }}
       {...props}
     >
-      {label}
+
+    {label}
+
     </button>
   );
 };

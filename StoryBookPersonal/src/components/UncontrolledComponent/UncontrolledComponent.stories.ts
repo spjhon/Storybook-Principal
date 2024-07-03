@@ -1,16 +1,19 @@
 import { fn } from "@storybook/test";
 
-import AnimalShow from './AnimalShow';
+import Uncontrolled from './UncontrolledComponent';
 
+export const ActionsData = {
+  onClick: fn(),
+};
 
 export default {
-  component: AnimalShow,
-  title: 'AnimalShow',
+  component: Uncontrolled,
+  title: 'Uncontrolled',
   tags: ['autodocs'],
   //👇 Our exports that end in "Data" are not stories.
-  
+  excludeStories: /.*Data$/,
   args: {
-    onClick: fn()
+    ...ActionsData,
   },
 };
 

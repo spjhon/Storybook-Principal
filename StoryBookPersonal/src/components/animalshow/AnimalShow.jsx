@@ -17,13 +17,13 @@ const svgMap = {
     horse
 }
 
-const AnimalShow = ({type}) => {
+const AnimalShow = ({type, onClick}) => {
 
     const [clicks, setClicks] = useState(0);
 
     const handleClick = () => {
         setClicks (clicks + 1);
-        
+        onClick()
     };
 
     return  (
@@ -31,6 +31,8 @@ const AnimalShow = ({type}) => {
     <div className='animal-show' onClick={handleClick}>
         <img className='animal' alt='animal' src={svgMap[type]} />
         <img className='heart' alt='heart' src = {heart} style = {{ width: 10 + 10*clicks + 'px'}}/>
+    <button onClick={handleClick} >boton</button>
+
     </div>
 
     )
