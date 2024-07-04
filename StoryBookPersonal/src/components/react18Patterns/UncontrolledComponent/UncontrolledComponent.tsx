@@ -5,6 +5,9 @@ interface Values {
   lastName: string;
 }
 
+/*En un componente no controlado, el estado del formulario no es manejado por el componente React. En su lugar, se accede 
+directamente a los elementos del DOM para obtener sus valores cuando sea necesario (por ejemplo, al enviar el formulario).*/
+
 const Uncontrolled: FC = () => {
 
   
