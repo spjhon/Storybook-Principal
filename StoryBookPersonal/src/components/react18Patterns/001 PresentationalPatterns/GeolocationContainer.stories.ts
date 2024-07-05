@@ -1,14 +1,14 @@
 //import { fn } from "@storybook/test";
 
-import Button from './SwitchHandlerEventPattern';
+import GeolocationContainer from './GeolocationContainer';
 
 export const ActionsData = {
   
 };
 
 export default {
-  component: Button,
-  title: 'React18 Patterns Book/Switch Handler Event Pattern',
+  component: GeolocationContainer,
+  title: 'React18 Patterns Book/001 Container Pattern',
   tags: ['autodocs'],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,

@@ -1,14 +1,14 @@
 //import { fn } from "@storybook/test";
 
-import Button from './SwitchHandlerEventPattern';
+import Focus from './Focus';
 
 export const ActionsData = {
   
 };
 
 export default {
-  component: Button,
-  title: 'React18 Patterns Book/Switch Handler Event Pattern',
+  component: Focus,
+  title: 'React18 Patterns Book/forwardRef Example',
   tags: ['autodocs'],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,

@@ -1,0 +1,75 @@
+# Conditional Patterns
+
+## 1. Checkeo Basico
+
+```tsx
+let button
+ 
+if (isLoggedIn) { 
+ button = <LogoutButton />
+} 
+ 
+return <div>{button}</div>
+```
+
+## 2. In line conditional (terneary operation)
+
+```tsx
+<div> 
+ {isLoggedIn && <LoginButton />} 
+</div>
+```
+
+## 3. Utilizando un "else":
+
+```tsx
+let button
+
+if (isLoggedIn) { 
+ button = <LogoutButton />
+} else { 
+ button = <LoginButton />
+} 
+ 
+return <div>{button}</div>
+```
+
+### 3.1. Alternativamente se puede utilizar un corto circuito:
+
+```tsx
+<div> 
+ {isLoggedIn ? <LogoutButton /> : <LoginButton />} 
+</div>
+```
+
+```tsx
+<button [...]> 
+ {isFetching ? 'Loading...' : 'Load More'} 
+</button>
+```
+
+```tsx
+<div>
+ {dataIsReady && (isAdmin || userHasPermissions) && 
+ <SecretData />
+ }
+</div>
+```
+
+***
+
+Un ejemplo de un componente mas completo con condicionales
+
+```tsx
+const MyComponent = ({ dataIsReady, isAdmin, userHasPermissions }) => {
+ const canShowSecretData = () => { 
+ return dataIsReady && (isAdmin || userHasPermissions)
+ } 
+ 
+ return (
+ <div> 
+ {canShowSecretData() && <SecretData />} 
+ </div>
+ )
+}
+```
