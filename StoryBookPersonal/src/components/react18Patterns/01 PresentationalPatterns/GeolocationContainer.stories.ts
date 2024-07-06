@@ -8,7 +8,7 @@ export const ActionsData = {
 
 export default {
   component: GeolocationContainer,
-  title: 'React18 Patterns Book/001 Container Pattern',
+  title: 'React18 Patterns Book/01 Container Pattern',
   tags: ['autodocs'],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,

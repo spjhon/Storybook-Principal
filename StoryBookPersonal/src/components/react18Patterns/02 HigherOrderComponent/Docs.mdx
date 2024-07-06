@@ -1,0 +1,122 @@
+import {Meta} from "@storybook/blocks"
+import * as MyComponentStory from "./MyComponent.stories.ts"
+
+<Meta of={MyComponentStory} />
+
+# Higher Order Component
+
+ Para entender los componentes de orden superior (Higher-Order Components o HOC) en React, examinemos el ejemplo proporcionado de `withInnerWidth` y su uso en `MyComponent`.
+
+### Componente de Orden Superior (HOC): withInnerWidth
+
+Un **componente de orden superior** es una función que toma un componente y retorna un nuevo componente con funcionalidad añadida. En este caso, `withInnerWidth` añade la capacidad de seguir el tamaño de la ventana al componente que envuelve. Vamos a desglosarlo:
+
+1. **Definición del HOC**:
+   ```typescript
+   const withInnerWidth = (Component: any) => (props: any) => {
+     const [innerWidth, setInnerWidth] = useState(window.innerWidth)
+     
+     const handleResize = () => {
+       setInnerWidth(window.innerWidth)
+     }
+
+     useEffect(() => {
+       window.addEventListener('resize', handleResize)
+       return () => {
+         window.removeEventListener('resize', handleResize)
+       }
+     }, [])
+
+     return <Component {...props} innerWidth={innerWidth} />
+   }
+   export default withInnerWidth
+   ```
+
+   - **Parámetros**:
+     - `Component`: El componente que será envuelto por el HOC.
+   - **Estado**:
+     - Usa `useState` para inicializar y mantener el estado de `innerWidth` con el ancho actual de la ventana.
+   - **Efecto**:
+     - Usa `useEffect` para añadir un listener que actualiza `innerWidth` cada vez que la ventana cambia de tamaño.
+     - Limpia el listener cuando el componente se desmonta para evitar fugas de memoria.
+   - **Renderizado**:
+     - Retorna el componente original (`Component`) con todas sus props y la prop adicional `innerWidth`.
+
+### Componente de Presentación: MyComponent
+
+El componente `MyComponent` es un componente funcional que simplemente muestra el valor de `innerWidth`.
+
+1. **Definición de Props**:
+   ```typescript
+   type Props = {
+     innerWidth: number
+   }
+   ```
+
+2. **Renderizado**:
+   ```typescript
+   const MyComponent: FC<Props> = ({ innerWidth }) => <div>innerWidth: {innerWidth}</div>
+   ```
+   - Renderiza un `div` mostrando el valor de `innerWidth`.
+
+3. **Exportación**:
+   ```typescript
+   export default withInnerWidth(MyComponent)
+   ```
+   - `MyComponent` se envuelve con el HOC `withInnerWidth` antes de ser exportado. Esto significa que `MyComponent` recibirá `innerWidth` como prop desde el HOC.
+
+### Resumen
+
+1. **Componente de Orden Superior (HOC) - withInnerWidth**:
+   - Añade funcionalidad a un componente existente.
+   - En este caso, añade la capacidad de seguir el tamaño de la ventana.
+   - Usa hooks (`useState` y `useEffect`) para manejar el estado y los efectos secundarios.
+   - Retorna un nuevo componente con props adicionales (`innerWidth`).
+
+2. **Componente de Presentación - MyComponent**:
+   - Renderiza la UI basada en las props.
+   - No maneja estado ni lógica de negocio por sí mismo.
+   - En este ejemplo, muestra el ancho de la ventana (`innerWidth`).
+
+### Ejemplo de Uso de HOC
+
+```typescript
+// Con el HOC aplicado, MyComponent ahora tiene la capacidad de seguir el tamaño de la ventana.
+const EnhancedComponent = withInnerWidth(MyComponent)
+
+// En algún lugar de tu aplicación
+<EnhancedComponent />
+```
+
+Este patrón es útil para reutilizar lógica y mantener los componentes enfocados en una sola responsabilidad. Los HOCs permiten la composición de comportamientos y la separación de preocupaciones, mejorando la organización y mantenibilidad del código.
+*/
+
+## Function as Child
+
+El concepto principal es que en lugar de pasar un hijo como componente, definimos una función que puede recibir parámetros del padre. Veamos cómo se ve:
+
+```javascript
+const FunctionAsChild = ({ children }) => children();
+```
+
+la idea es utilizarlo de la siguiente forma:
+
+```javascript
+<FunctionAsChild>{() => <div>Hello, World!</div>}</FunctionAsChild>
+```
+
+Otro ejemplo:
+
+```javascript
+const Name = ({ children }) => children('World')
+
+<Name>
+ {name => <div>Hello, {name}!</div>}
+</Name>
+```
+
+Ventajas de este pattern:
+
+- Encapsular componentes
+- Componer componentes con este enfoque no obliga a los hijos a usar nombres de propiedades predefinidos.
+- composing components dynamically.
