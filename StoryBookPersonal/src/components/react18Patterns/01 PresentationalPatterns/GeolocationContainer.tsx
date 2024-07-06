@@ -146,7 +146,7 @@ const GeolocationContainer = () => {
     //Esta primera parte es el destructurado para tener latitude y longitude disponibles dentro de la funcion
     coords: { latitude, longitude },
   }: {
-    // Esta es la parte de typescript en donde se define los types de los props que entran y que estan disponibles dentro de la funcion
+    // Esta es la parte de typescript en donde se define los "types" de los props que entran y que estan disponibles dentro de la funcion
     
     coords: { latitude: number; longitude: number }
   }) => {

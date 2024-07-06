@@ -8,7 +8,7 @@ export const ActionsData = {
 
 export default {
   component: Controlled,
-  title: 'React18 Patterns Book/Controlled',
+  title: 'React18 Patterns Book/Controlled Forms',
   tags: ['autodocs'],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,
