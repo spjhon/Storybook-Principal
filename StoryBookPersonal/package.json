@@ -12,8 +12,10 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@types/react-transition-group": "^4.4.10",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.5.0",
