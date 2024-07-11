@@ -1,0 +1,351 @@
+import {Meta} from "@storybook/blocks"
+import * as App from "./App.stories.ts"
+
+<Meta of={App} />
+
+# useCallback
+
+## Ejemplo y uso de useCallback
+
+El hook `useCallback` en React se utiliza para memorizar funciones, evitando que se vuelvan a crear en cada renderización. Esto es particularmente útil cuando se pasa una función a un componente hijo optimizado con `React.memo` o `memo`. Sin `useCallback`, las funciones se recrean en cada renderización del componente padre, lo que provoca que los componentes hijos se vuelvan a renderizar innecesariamente.
+
+### Uso de `useCallback`
+
+El hook `useCallback` toma dos argumentos:
+1. **La función que deseas memorizar.**
+2. **Una lista de dependencias.** La función se volverá a crear solo cuando una de las dependencias cambie.
+
+### Ejemplo Integrado
+
+Revisemos cómo `useCallback` se utiliza en el contexto del ejemplo anterior para memorizar la función `handleDelete`:
+
+```tsx
+// App.tsx
+import { FC, useState, useEffect, useMemo, useCallback, ChangeEvent } from 'react';
+import List, { Todo } from './List';
+
+const initialTodos: Todo[] = [
+  { id: 1, task: 'Go shopping' },
+  { id: 2, task: 'Pay the electricity bill' }
+];
+
+const App: FC = () => {
+  const [todoList, setTodoList] = useState<Todo[]>(initialTodos);
+  const [task, setTask] = useState<string>('');
+  const [term, setTerm] = useState<string>('');
+
+  useEffect(() => {
+    console.log('Rendering <App />');
+  });
+
+  const handleCreate = () => {
+    const newTodo = { id: Date.now(), task };
+    setTodoList([...todoList, newTodo]);
+    setTask('');
+  };
+
+  // Memorizar handleDelete para evitar recreaciones innecesarias
+  const handleDelete = useCallback((taskId: number) => {
+    const newTodoList = todoList.filter((todo: Todo) => todo.id !== taskId);
+    setTodoList(newTodoList);
+  }, [todoList]); // handleDelete se recreará solo si cambia todoList
+
+  const handleSearch = () => {
+    setTerm(task);
+  };
+
+  const filteredTodoList = useMemo(() => 
+    todoList.filter((todo: Todo) => 
+      todo.task.toLowerCase().includes(term.toLowerCase())
+    ), 
+    [term, todoList]
+  );
+
+  return (
+    <>
+      <input
+        type="text"
+        value={task}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setTask(e.target.value)}
+      />
+      <button onClick={handleCreate}>Create</button>
+      <button onClick={handleSearch}>Search</button>
+      <List todoList={filteredTodoList} handleDelete={handleDelete} />
+    </>
+  );
+};
+
+export default App;
+
+// List.tsx
+import { FC, useEffect, memo } from 'react';
+import Task from './Task';
+
+export type Todo = {
+  id: number;
+  task: string;
+};
+
+interface Props {
+  todoList: Todo[];
+  handleDelete: (id: number) => void;
+}
+
+const List: FC<Props> = ({ todoList, handleDelete }) => {
+  useEffect(() => {
+    console.log('Rendering <List />');
+  });
+
+  return (
+    <ul>
+      {todoList.map((todo: Todo) => (
+        <Task
+          key={todo.id}
+          id={todo.id}
+          task={todo.task}
+          handleDelete={handleDelete}
+        />
+      ))}
+    </ul>
+  );
+};
+
+export default memo(List);
+
+// Task.tsx
+import { FC, useEffect, memo } from 'react';
+
+interface Props {
+  id: number;
+  task: string;
+  handleDelete: (id: number) => void;
+}
+
+const TaskComponent: FC<Props> = ({ id, task, handleDelete }) => {
+  useEffect(() => {
+    console.log('Rendering <Task />', task);
+  });
+
+  return (
+    <li>
+      {task} 
+      <button onClick={() => handleDelete(id)}>X</button>
+    </li>
+  );
+};
+
+const MemoizedTask = memo(TaskComponent);
+
+export default MemoizedTask;
+```
+
+### Desglose de `useCallback`
+
+1. **Definición de `handleDelete`**:
+   ```tsx
+   const handleDelete = useCallback((taskId: number) => {
+     const newTodoList = todoList.filter((todo: Todo) => todo.id !== taskId);
+     setTodoList(newTodoList);
+   }, [todoList]); // handleDelete se recreará solo si cambia todoList
+   ```
+   - `useCallback` se usa para memorizar la función `handleDelete`.
+   - La función se vuelve a crear solo si cambia `todoList`.
+
+2. **Uso de `handleDelete` en el componente hijo (`List`)**:
+   ```tsx
+   <List todoList={filteredTodoList} handleDelete={handleDelete} />
+   ```
+   - `handleDelete` se pasa como prop al componente `List`.
+   - Debido a `useCallback`, `handleDelete` tiene la misma referencia mientras `todoList` no cambie, evitando renderizaciones innecesarias del componente hijo.
+
+3. **Uso de `handleDelete` en `Task`**:
+   ```tsx
+   <Task key={todo.id} id={todo.id} task={todo.task} handleDelete={handleDelete} />
+   ```
+   - `handleDelete` se pasa como prop a cada `Task`.
+
+### Beneficios de `useCallback`
+
+- **Evitar Renderizaciones Innecesarias**: Si no se usa `useCallback`, `handleDelete` se recrea en cada renderización de `App`, lo que hace que `List` y todos sus componentes hijos (`Task`) se rendericen nuevamente incluso si sus props no han cambiado.
+- **Optimización de Componentes Memorables**: Trabaja en conjunto con `memo` para asegurarse de que los componentes hijos no se rendericen a menos que sus props cambien realmente.
+
+### Consideraciones
+
+- **Costo de Memorización**: Aunque `useCallback` ayuda a evitar renderizaciones innecesarias, introduce un costo de memorización. Debe usarse cuando las funciones pasadas como props son significativas en términos de costo de renderización.
+- **Complejidad de Dependencias**: Es importante gestionar correctamente las dependencias en `useCallback`. Si las dependencias no se manejan correctamente, puede llevar a errores sutiles o a que la función no se actualice cuando debería.
+
+La razón principal para utilizar `useCallback` en `handleDelete` y no en `handleCreate` en tu ejemplo se relaciona con la optimización del rendimiento y la forma en que se pasan las funciones como props a los componentes hijos.
+
+### Uso de `useCallback` en `handleDelete`:
+
+1. **Memorización de Funciones:** `useCallback` se utiliza para memorizar la función `handleDelete` y evitar que se cree una nueva instancia de la función en cada renderizado. Esto es especialmente importante cuando `handleDelete` se pasa como prop a componentes hijos como `List` o `Task`.
+
+2. **Prevención de Renderizados Innecesarios:** Sin `useCallback`, cada vez que `App` se renderiza, se crea una nueva referencia de `handleDelete`, lo cual puede causar que los componentes hijos que utilizan `handleDelete` se vuelvan a renderizar innecesariamente. Usando `useCallback`, la referencia de `handleDelete` se mantiene constante siempre que sus dependencias (`todoList`) no cambien.
+
+### No Uso de `useCallback` en `handleCreate`:
+
+1. **No Pasado como Prop:** En tu ejemplo, `handleCreate` no se pasa como prop a ningún componente hijo. Se utiliza directamente dentro del componente `App`. Por lo tanto, no hay riesgo de causar renderizados innecesarios en componentes hijos debido a la recreación de la función.
+
+2. **Simplicidad:** Si una función no se pasa como prop y no tiene un impacto significativo en el rendimiento, es más simple no envolverla en `useCallback`. Esto evita una complejidad innecesaria en el código.
+
+### Consideraciones de Rendimiento:
+
+- **Renderizados Condicionales:** `useCallback` es útil cuando la función se pasa como prop a componentes memoizados (usando `memo`). Esto ayuda a prevenir que esos componentes se rendericen innecesariamente cuando la función se vuelve a crear en cada renderizado del componente padre.
+
+En resumen, `useCallback` se utiliza en `handleDelete` para evitar la recreación de la función y prevenir renderizados innecesarios en componentes hijos. No es necesario usar `useCallback` en `handleCreate` porque no se pasa como prop a ningún componente hijo, manteniendo el código más simple y limpio.
+
+Saber cuándo utilizar `useCallback` en React se basa principalmente en la necesidad de optimizar el rendimiento y prevenir renderizados innecesarios. Aquí hay algunas pautas para ayudarte a decidir cuándo usar `useCallback`:
+
+### Cuándo Utilizar `useCallback`:
+
+1. **Funciones Pasadas como Props:**
+   - Si una función se pasa como prop a componentes hijos y esos componentes están memoizados (usando `React.memo`), usar `useCallback` puede evitar que los hijos se rendericen innecesariamente al mantener la misma referencia de la función entre renderizados.
+
+2. **Funciones Dependientes de Valores Estables:**
+   - Si la función depende de valores que cambian poco o nunca, `useCallback` puede ayudar a evitar la recreación de la función en cada renderizado.
+
+3. **Rendimiento en Componentes Grandes:**
+   - En componentes que tienen un costo alto de renderizado, como listas grandes o componentes complejos, `useCallback` puede ayudar a mejorar el rendimiento al reducir la cantidad de re-renderizados innecesarios.
+
+### Cuándo No Utilizar `useCallback`:
+
+1. **Funciones No Pasadas como Props:**
+   - Si la función no se pasa a componentes hijos, no hay un beneficio significativo en usar `useCallback`.
+
+2. **Funciones Simples y Rápidas:**
+   - Si la función es muy simple y rápida de ejecutar, el costo de usar `useCallback` podría superar los beneficios de rendimiento.
+
+3. **Premature Optimization:**
+   - No uses `useCallback` prematuramente. Si no has identificado un problema de rendimiento específico, es mejor mantener el código simple y añadir optimizaciones sólo cuando sea necesario.
+
+### Ejemplos Prácticos de Uso de `useCallback`:
+
+- **Componente de Lista:** Si tienes un componente de lista donde cada elemento de la lista recibe una función para manejar eventos (como clicks), y la lista se memoiza para evitar renderizados innecesarios.
+- **Eventos de Formulario:** Si tienes un formulario con múltiples campos y handlers de eventos que se pasan como props a los componentes de los campos, usando `useCallback` puede ayudar a prevenir re-renderizados de esos componentes.
+
+### Resumen:
+
+Usa `useCallback` principalmente cuando:
+
+- La función se pasa como prop a componentes memoizados.
+- La función se usa en componentes grandes o costosos en términos de renderizado.
+- La función depende de valores estables y su recreación frecuente puede causar problemas de rendimiento.
+
+No uses `useCallback` si la función no se pasa como prop, es simple y rápida, o no has identificado problemas de rendimiento específicos.
+
+### Conclusión
+
+El uso de `useCallback` en combinación con `memo` es una técnica poderosa para optimizar componentes en React, reduciendo renderizaciones innecesarias y mejorando el rendimiento general de la aplicación. Es especialmente útil en aplicaciones grandes con estructuras de componentes complejas y anidadas.
+
+***
+
+entonces, segun entiendo , cuando un componente se renderiza y recibe funciones como props, lo que hace es que en cada re-renderizado, el componente vuelve y registra la funcion que llego como prop, y al haber una nueva referencia de esta funcion en la memoria entonces el componente que contiene la funcion como tal entonces se va a re-renderizar tambien asi ningun state en ese componente padre haya cambiado?
+
+Exactamente, lo has entendido correctamente. Vamos a detallar un poco más cómo funciona esto y por qué `useCallback` es útil en estos casos.
+
+### Comportamiento de Renderizado y Referencias de Funciones
+
+1. **Recreación de Funciones en Cada Renderizado:**
+   - En React, cada vez que un componente se renderiza, todas las funciones definidas dentro de ese componente se vuelven a crear. Esto significa que la referencia en memoria de esas funciones cambia con cada renderizado.
+
+2. **Pasar Funciones como Props:**
+   - Cuando pasas una función como prop a un componente hijo, si la referencia de la función cambia, React considera que esa prop ha cambiado. Esto puede desencadenar un re-renderizado del componente hijo, incluso si el estado del componente padre no ha cambiado.
+
+3. **Componentes Memoizados:**
+   - Si el componente hijo está memoizado usando `React.memo`, solo se volverá a renderizar si sus props han cambiado. Sin embargo, si la función pasada como prop se recrea en cada renderizado del padre, `React.memo` no podrá evitar el re-renderizado del hijo, porque verá una nueva referencia de la función en cada renderizado.
+
+### Uso de `useCallback` para Prevenir Re-renderizados Innecesarios
+
+- **Memorización de Funciones:**
+  - `useCallback` se utiliza para memorizar la función, asegurando que la referencia de la función en memoria no cambie entre renderizados, a menos que alguna de sus dependencias cambie. Esto es útil para evitar re-renderizados innecesarios de componentes hijos memoizados.
+
+### Ejemplo Teórico de Cuándo Usar `useCallback`:
+
+1. **Componente Padre:**
+   - Define una función `handleDelete` que se pasa como prop a un componente hijo `List`.
+
+2. **Componente Hijo Memoizado:**
+   - El componente `List` recibe `handleDelete` como prop y está memoizado para evitar re-renderizados innecesarios.
+
+3. **Sin `useCallback`:**
+   - Cada vez que el componente padre se renderiza, `handleDelete` se recrea. La referencia cambia, causando que `List` se vuelva a renderizar, incluso si nada más en `List` ha cambiado.
+
+4. **Con `useCallback`:**
+   - `handleDelete` se memoriza usando `useCallback`, asegurando que la referencia de la función solo cambie si alguna de sus dependencias cambia. Esto previene que `List` se re-renderice innecesariamente.
+
+### Resumen:
+
+Sí, cuando un componente se renderiza y recibe funciones como props, la recreación de esas funciones puede causar re-renderizados innecesarios en componentes hijos, incluso si el estado del componente padre no ha cambiado. Usar `useCallback` ayuda a memorizar las funciones, manteniendo su referencia constante entre renderizados y previniendo re-renderizados innecesarios en componentes memoizados que reciben estas funciones como props.
+
+***
+
+listo, ya entiendo useCallback y su necesidad dada la forma en como las funciones son asignadas y como la misma funcion da false en un comparativo de triple igual (===), estoy en lo correcto?
+
+Sí, estás en lo correcto. Las funciones en JavaScript son objetos, y cada vez que una función se crea (o recrea) dentro de un componente, se genera una nueva referencia en memoria. Incluso si dos funciones tienen el mismo contenido, no son consideradas iguales porque sus referencias en memoria son diferentes.
+
+### Ejemplo de Referencias de Funciones:
+
+- **Sin `useCallback`:**
+  ```javascript
+  const func1 = () => {};
+  const func2 = () => {};
+  console.log(func1 === func2); // false
+  ```
+  Aunque `func1` y `func2` tienen el mismo contenido, no son iguales porque son dos instancias diferentes.
+
+- **Con `useCallback`:**
+  ```javascript
+  const func1 = useCallback(() => {}, []);
+  const func2 = useCallback(() => {}, []);
+  console.log(func1 === func2); // true
+  ```
+  Con `useCallback`, si las dependencias no cambian, `func1` y `func2` tendrán la misma referencia en memoria y serán consideradas iguales.
+
+### Importancia en React:
+
+- **Recreación de Funciones:**
+  Cada vez que un componente se renderiza, todas las funciones definidas dentro del componente se recrean, generando nuevas referencias en memoria.
+
+- **Pasar Funciones como Props:**
+  Cuando una función se pasa como prop a un componente hijo, si la referencia cambia, React considera que la prop ha cambiado, lo cual puede desencadenar un re-renderizado del componente hijo.
+
+- **Uso de `useCallback`:**
+  Al usar `useCallback`, puedes memorizar la función y mantener la misma referencia entre renderizados, evitando re-renderizados innecesarios en componentes hijos memoizados que dependen de esa función.
+
+Por lo tanto, entender cómo las referencias de funciones funcionan en JavaScript y cómo `useCallback` ayuda a mantener referencias estables es clave para optimizar el rendimiento de las aplicaciones React.
+
+***
+
+## Conclusion de las tres optimizaciones memo, useMemo y useCallback
+
+1. **Memoización de Componente con Props:** Para memoizar un componente funcional y sus props, se utiliza `React.memo`. Esto asegura que el componente no se vuelva a renderizar innecesariamente si sus props no han cambiado.
+
+2. **Memoización de Valor Devuelto de Función Compleja:** Para memoizar el resultado de una función compleja (como un cálculo costoso), se utiliza `useMemo`. Esto evita que la función se vuelva a ejecutar en cada renderizado si las dependencias no han cambiado.
+
+3. **Memoización de Función que Pasa de Padre a Hijo:** Para memoizar una función que se pasa de un componente padre a un componente hijo (por ejemplo, como prop), se utiliza `useCallback`. Esto asegura que la función tenga la misma referencia en memoria entre renderizados, evitando así que el componente hijo se re-renderice innecesariamente.
+
+### En resumen:
+
+- **`React.memo`:** Se usa para memoizar un componente funcional completo basado en sus props.
+  
+  ```javascript
+  const MemoizedComponent = React.memo(MyComponent);
+  ```
+
+- **`useMemo`:** Se utiliza para memoizar el resultado de una función/memoización costosa.
+
+  ```javascript
+  const memoizedValue = useMemo(() => computeExpensiveValue(dep1, dep2), [dep1, dep2]);
+  ```
+
+- **`useCallback`:** Se emplea para memoizar una función y asegurar que tenga la misma referencia entre renderizados.
+
+  ```javascript
+  const memoizedCallback = useCallback(() => {
+    // Función callback
+  }, [dependency]);
+  ```
+
+### Conclusión:
+
+Utiliza `React.memo` para memoizar componentes completos y `useMemo` para memoizar valores calculados o funciones complejas. `useCallback` es ideal para memoizar funciones que se pasan de un componente padre a un hijo, optimizando así el rendimiento y asegurando una actualización eficiente del DOM en aplicaciones React.

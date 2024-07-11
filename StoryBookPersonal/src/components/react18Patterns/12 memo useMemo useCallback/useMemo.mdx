@@ -1,0 +1,76 @@
+import {Meta} from "@storybook/blocks"
+import * as App from "./App.stories.ts"
+
+<Meta of={App} />
+
+# useMemo
+
+## Explicacion y ejemplo
+
+Perfecto, vamos a hablar sobre `useMemo` y hacer algunas comparaciones con `React.memo`, así como consolidar las conclusiones a las que hemos llegado hasta ahora.
+
+### Diferencia entre `useMemo` y `React.memo`
+
+1. **`useMemo`:**
+
+   - `useMemo` es un hook de React que memoriza el resultado de una función/memoización costosa y lo guarda en memoria. Se utiliza para evitar cálculos innecesarios en cada renderizado, especialmente útil para optimizar el rendimiento cuando se trata de cálculos computacionalmente intensivos dentro de un componente funcional.
+
+2. **`React.memo`:**
+   - `React.memo` es un HOC (Higher-Order Component) que memoiza un componente funcional completo. Su propósito es evitar re-renderizados innecesarios del componente cuando sus props no han cambiado, optimizando así el rendimiento al comparar las props actuales con las props previas.
+
+### Uso de `useMemo` y `React.memo`
+
+- **`useMemo`:**
+
+  - Se utiliza dentro de componentes funcionales para memoizar el resultado de una función o expresión costosa, evitando recálculos en cada renderizado si las dependencias no han cambiado. Es útil para optimizar el rendimiento cuando se realizan operaciones que consumen tiempo, como transformaciones de datos o cálculos complejos.
+
+- **`React.memo`:**
+  - Se aplica a componentes funcionales para memoizar el componente completo. Esto significa que el componente solo se volverá a renderizar si las props que recibe han cambiado. Es útil en componentes que tienen un rendimiento crítico y que reciben props estáticas o que no cambian con frecuencia.
+
+### Uso Combinado
+
+- **Estrategias de Optimización:**
+  - En casos donde un componente funcional memoizado (`React.memo`) recibe props que incluyen funciones, es común combinar `useCallback` para las funciones y `React.memo` para el componente en su conjunto. Esto asegura una optimización integral de rendimiento al reducir tanto la recreación de funciones como los re-renderizados innecesarios del componente.
+
+En resumen, `useMemo` y `React.memo` son herramientas distintas pero complementarias para optimizar el rendimiento en React. Se utilizan en diferentes contextos para memoizar resultados de cálculos costosos (`useMemo`) y componentes completos (`React.memo`), respectivamente, contribuyendo a una experiencia de usuario más fluida y eficiente en aplicaciones React.
+
+***
+
+entonces useMemo es que cuando se llame una funcion que haga un calculo pero resulta que sus dependencias no han cambiado, entonces en lugar de hacer todos los calculos para llegar al mismo return, pues devuelve el dato que esta memorizado en lugar de hacer de nuevo todos los calculos, estoy en lo correcto?
+
+Exactamente, has captado bien la idea de `useMemo` en React.
+
+### Funcionamiento de `useMemo`
+
+1. **Memorización de Resultados:**
+   - `useMemo` memoriza el resultado de una función/memoización costosa y lo guarda en memoria.
+   - Cuando se llama a `useMemo`, se ejecuta la función proporcionada y guarda el resultado.
+   - Si las dependencias especificadas no han cambiado desde la última renderización, `useMemo` devuelve el resultado memorizado sin ejecutar nuevamente la función.
+
+2. **Optimización de Rendimiento:**
+   - Es útil cuando tienes operaciones computacionalmente intensivas dentro de un componente funcional.
+   - Evita recálculos innecesarios y mejora el rendimiento al garantizar que los cálculos se realicen solo cuando sea necesario (cuando las dependencias cambian).
+
+3. **Sintaxis Básica:**
+   - La sintaxis básica de `useMemo` es la siguiente:
+     ```javascript
+     const memoizedValue = useMemo(() => computeExpensiveValue(dep1, dep2), [dep1, dep2]);
+     ```
+     - Donde `computeExpensiveValue` es una función que realiza cálculos costosos.
+     - `[dep1, dep2]` son las dependencias que `useMemo` observa. Si alguna de estas dependencias cambia entre renderizados, `computeExpensiveValue` se ejecutará nuevamente para actualizar `memoizedValue`.
+
+### Beneficios y Aplicaciones
+
+- **Cálculos Intensivos:** Utiliza `useMemo` para cálculos que involucren transformaciones de datos complejas, filtrados, ordenamientos, entre otros, para evitar recálculos innecesarios.
+
+- **Mejora del Rendimiento:** Contribuye a una mejor experiencia de usuario al reducir el tiempo de renderizado y mejorar la respuesta de la interfaz.
+
+### Comparación con `React.memo`
+
+- **`useMemo` vs `React.memo`:**
+  - `useMemo` se usa para memorizar resultados de funciones/memoizaciones.
+  - `React.memo` se utiliza para memoizar componentes completos basados en cambios en sus props.
+
+### Conclusión
+
+En resumen, `useMemo` en React es una herramienta fundamental para optimizar el rendimiento al evitar cálculos costosos y reutilizar resultados previamente calculados cuando las condiciones no han cambiado. Utilízalo estratégicamente en componentes funcionales para mejorar la eficiencia y la velocidad de tu aplicación.
