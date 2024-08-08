@@ -35,12 +35,14 @@ const Uncontrolled: FC = () => {
         type="text"
         name="firstName"
         onChange={handleChange}
+        title="prueba"
       />
 
       <input
         type="text"
         name="lastName"
         onChange={handleChange}
+        title="prueba"
       />
 
       <button>Submit</button>

@@ -54,6 +54,7 @@ const Controlled: FC = () => {
         name="firstName"
         value={values.firstName}
         onChange={handleChange}
+        title="prueba"
       />
 
       <input
@@ -62,6 +63,7 @@ const Controlled: FC = () => {
         // Esto es lo que hace que sea controlado
         value={values.lastName}
         onChange={handleChange}
+        title="prueba"
       />
 
       <button>Submit</button>

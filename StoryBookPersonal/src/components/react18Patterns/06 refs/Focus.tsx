@@ -109,6 +109,7 @@ const Focus = () => {
       <input 
         type="text" 
         ref={inputRef} 
+        title="prueba"
       /> 
       <button onClick={handleClick}>Set Focus</button> 
     </> 

@@ -84,6 +84,7 @@ const App: FC = () => {
     <>
       <input
         type="text"
+        title="prueba"
         value={task}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setTask(e.target.value)} // Update task state on input change
       />

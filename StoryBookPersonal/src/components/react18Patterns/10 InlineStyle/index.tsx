@@ -58,6 +58,7 @@ const FontSize = () => {
       value={value} 
       onChange={handleChange} 
       style={{ fontSize: value }} 
+      title='prueba'
     /> 
   )
 }
