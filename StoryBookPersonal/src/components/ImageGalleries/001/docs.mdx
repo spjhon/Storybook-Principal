@@ -1,0 +1,121 @@
+import {Meta} from "@storybook/blocks"
+import * as App from "./GridGallery.stories.ts"
+
+<Meta of={App} />
+
+
+Este componente `GridGallery` es un componente de React que crea una galería de imágenes utilizando la librería PhotoSwipe para proporcionar una experiencia de visualización de imágenes con un lightbox. A continuación, te explico en detalle cómo funciona:
+
+npm: [npm](https://www.npmjs.com/package/react-photoswipe-gallery)
+
+official pages: [official page](https://photoswipe.com/)
+
+
+```ts
+import React, { useEffect } from 'react';
+import PhotoSwipeLightbox from 'photoswipe/lightbox';
+import 'photoswipe/style.css';
+
+export interface Image {
+  largeURL: string;
+  thumbnailURL: string;
+  width: number;
+  height: number;
+}
+
+export interface GridGalleryProps {
+  galleryID: string;
+  images: Image[];
+}
+
+const GridGallery: React.FC<GridGalleryProps> = ({ galleryID, images }) => {
+
+
+  useEffect(() => {
+    const lightbox: PhotoSwipeLightbox | null = new PhotoSwipeLightbox({
+      gallery: '#' + galleryID,
+      children: 'a',
+      pswpModule: () => import('photoswipe'),
+    });
+    lightbox.init();
+
+    return () => {
+      lightbox.destroy();
+      //lightbox = null;
+    };
+  }, [galleryID]);
+
+  
+
+  return (
+    <div className="pswp-gallery" id={galleryID}>
+      {images.map((image, index) => (
+        <a
+          href={image.largeURL}
+          data-pswp-width={image.width}
+          data-pswp-height={image.height}
+          key={galleryID + '-' + index}
+          target="_blank"
+          rel="noreferrer"
+          title='demo'
+        >
+          <img src={image.thumbnailURL} alt="" />
+        </a>
+      ))}
+    </div>
+  );
+};
+
+export default GridGallery;
+```
+
+
+### 1. Importaciones y Tipos
+
+- **`useEffect`**: Un hook de React que permite realizar efectos secundarios en componentes funcionales, como suscribirse a eventos o manipular el DOM después de que el componente haya sido renderizado.
+  
+- **`PhotoSwipeLightbox`**: Es la clase principal de PhotoSwipe que maneja la funcionalidad del lightbox, permitiendo a los usuarios abrir imágenes en un lightbox interactivo.
+  
+- **`Image`** y **`GridGalleryProps`**: Son interfaces TypeScript que definen los tipos de las propiedades que el componente recibe:
+  - `Image` define la estructura de un objeto de imagen con `largeURL`, `thumbnailURL`, `width`, y `height`.
+  - `GridGalleryProps` define las propiedades que el componente `GridGallery` acepta: `galleryID` (un string único para identificar la galería) e `images` (un array de objetos `Image`).
+
+### 2. El Componente `GridGallery`
+
+El componente `GridGallery` recibe dos propiedades principales:
+- **`galleryID`**: Un identificador único para la galería, usado para seleccionar el contenedor de la galería en el DOM.
+- **`images`**: Un array de objetos `Image` que contiene la URL de la imagen grande, la URL del thumbnail, el ancho y la altura de la imagen grande.
+
+### 3. Uso del Hook `useEffect`
+
+El `useEffect` se utiliza aquí para inicializar el lightbox una vez que el componente se ha montado en el DOM y se destruye cuando el componente se desmonta. El ciclo de vida del `useEffect` es el siguiente:
+
+- **Inicialización del Lightbox**:
+  - Se crea una instancia de `PhotoSwipeLightbox` y se le pasa un objeto de configuración.
+  - **`gallery`**: Selecciona el contenedor de la galería utilizando el `galleryID`.
+  - **`children`**: Define los elementos hijos que serán las imágenes dentro de la galería. Aquí se selecciona todos los elementos `<a>` dentro de la galería.
+  - **`pswpModule`**: Carga dinámicamente el módulo de PhotoSwipe cuando se inicializa el lightbox, optimizando el tamaño del bundle al cargar el módulo solo cuando es necesario.
+  - **`lightbox.init()`**: Inicializa el lightbox.
+
+- **Destrucción del Lightbox**:
+  - Cuando el componente se desmonta, se llama a `lightbox.destroy()` para limpiar cualquier instancia de PhotoSwipe, asegurando que no haya fugas de memoria.
+
+### 4. Renderizado de la Galería
+
+En el método `return`, el componente renderiza un contenedor `<div>` con la clase `pswp-gallery` y el `id` proporcionado por `galleryID`. Luego, itera sobre el array `images` para crear un enlace `<a>` por cada imagen.
+
+- **`href`**: Es la URL de la imagen grande que se mostrará en el lightbox.
+- **`data-pswp-width` y `data-pswp-height`**: Son atributos personalizados que PhotoSwipe utiliza para conocer las dimensiones de la imagen, ayudando a renderizarla correctamente en el lightbox.
+- **`target="_blank"` y `rel="noreferrer"`**: Aseguran que la imagen se abra en una nueva pestaña de manera segura si se hace clic directamente en el enlace.
+- **`<img src={image.thumbnailURL} />`**: Es la imagen en miniatura que se muestra en la galería.
+
+### 5. Uso de `key`
+
+El atributo `key` se utiliza para asignar un identificador único a cada elemento de la lista. En este caso, se genera combinando el `galleryID` y el índice de la imagen, asegurando que cada elemento del array tenga una `key` única.
+
+### 6. Exportación del Componente
+
+Finalmente, el componente `GridGallery` se exporta para que pueda ser utilizado en otras partes de la aplicación.
+
+### Resumen
+Este componente permite a los usuarios crear fácilmente una galería de imágenes con soporte de lightbox, cargando las imágenes de manera eficiente y proporcionando una experiencia de usuario interactiva. Se aprovechan las capacidades de React para gestionar el ciclo de vida del componente y asegurar una integración limpia y modular con la librería PhotoSwipe.
