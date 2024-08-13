@@ -1,0 +1,30 @@
+/* ParallelDivs.module.css */
+.container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+  
+/*
+
+¿Qué significa flex: 1;?
+Cuando usamos flex: 1;, estamos estableciendo estos valores de manera implícita:
+
+css
+Copiar código
+flex-grow: 1;
+flex-shrink: 1;
+flex-basis: 0%;
+
+
+*/
+
+  .item {
+    flex: 1;
+  }
+  
+  @media (max-width: 35rem) {
+    .container {
+      flex-direction: column;
+    }
+  }
