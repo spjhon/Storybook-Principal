@@ -1,0 +1,61 @@
+/* PaperCard.module.css */
+
+.upperSection {
+    z-index: 0;
+    position: relative;
+    height: 30rem;
+    background-color: #97B3B4;
+  }
+  
+  .lowerSection {
+    z-index: 3;
+    position: relative;
+    height: 50rem;
+    background-color: #FAEFE3;
+  }
+  
+  .card {
+    z-index: 5;
+    height: 24rem;
+    width: 16rem;
+    background-color: #96A399;
+    position: absolute;
+    top: 10rem;
+    left: 10rem;
+    border-radius: 1rem;
+  }
+  
+  .cardLowerOverlap {
+    z-index: 4; /* change to 6 to show what's going on */
+    position: absolute;
+    height: 4.6rem;
+    width: 16rem;
+    top: 29.4rem;
+    left: 10rem;
+    background-color: #96A399;
+    box-shadow: 5px 5px 7px 2px #373430ad;
+    border-radius: 0 0 1rem 1rem;
+  }
+  
+  .cardShadowLightBlur {
+    z-index: 2;
+    height: 24rem;
+    width: 16rem;
+    background-color: #27201d8f;
+    position: absolute;
+    top: 11.5rem;
+    left: 11rem;
+    filter: blur(0.5rem);
+    border-radius: 1rem;
+  }
+  
+  .cardShadowHeavyBlur {
+    z-index: 1;
+    height: 24rem;
+    width: 16rem;
+    background-color: #2e36378a;
+    position: absolute;
+    top: 13rem;
+    left: 13rem;
+    filter: blur(1.5rem);
+  }

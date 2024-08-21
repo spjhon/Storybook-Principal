@@ -6,7 +6,7 @@ export const ActionsData = {};
 
 export default {
   component: TimeLine,
-  title: "TimeLine",
+  title: "Components/TimeLines/001-TimeLine",
   tags: [],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,

@@ -9,7 +9,7 @@ export const ActionsData = {
 
 export default {
   component: HeadLessDropDown,
-  title: 'HeadLess Dropdown',
+  title: 'Components/DropDowns/HeadLess Dropdown',
   tags: ['autodocs'],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,

@@ -10,7 +10,7 @@ export const ActionsData = {
 
 export default {
   component: Slider,
-  title: 'Slider',
+  title: 'Components/Carousels/001-Slider',
   tags: ['autodocs'],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,

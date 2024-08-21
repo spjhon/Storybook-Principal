@@ -1,12 +1,12 @@
 
 // import { fn } from "@storybook/test";
-import TimeLineDemo from "./VerticalTimeLine"
+import PaperCard from "./PaperCard"
 
 export const ActionsData = {};
 
 export default {
-  component: TimeLineDemo,
-  title: "Components/TimeLines/003-Vertical Time Line",
+  component: PaperCard,
+  title: "Components/Cards/001-PaperCard",
   tags: [],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,

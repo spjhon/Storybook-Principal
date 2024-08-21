@@ -6,7 +6,7 @@ export const ActionsData = {};
 
 export default {
   component: GridGallery,
-  title: "Grid Gallery",
+  title: "Components/Image Galleries/001-Grid Gallery",
   tags: [],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,

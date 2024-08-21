@@ -6,7 +6,7 @@ export const ActionsData = {};
 
 export default {
   component: SimpleModal,
-  title: "Simple Modal",
+  title: "Components/Modals/001-Simple Modal",
   tags: [],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,
